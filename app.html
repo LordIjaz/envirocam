@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoHero - App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    🌊 EcoHero
+    <button id="logout-btn" class="logout">Logout</button>
+  </header>
+
+  <main class="app-container">
+    <h2>Welcome, <span id="user-email"></span> 👋</h2>
+    <p>Total Points: <strong id="points">0</strong></p>
+
+    <h3>Upload Cleanup Photo</h3>
+    <input type="file" id="photo-input" accept="image/*">
+    <button id="upload-btn">Upload</button>
+    <div id="gallery"></div>
+  </main>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { 
+      onAuthStateChanged, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+      doc, getDoc, updateDoc 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const userEmail = document.getElementById("user-email");
+    const pointsDisplay = document.getElementById("points");
+    const uploadBtn = document.getElementById("upload-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const gallery = document.getElementById("gallery");
+    const photoInput = document.getElementById("photo-input");
+
+    let currentUser, userDocRef, points = 0;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location = "index.html";
+        return;
+      }
+      currentUser = user;
+      userEmail.textContent = user.email;
+      userDocRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userDocRef);
+      if (snap.exists()) {
+        points = snap.data().points || 0;
+        pointsDisplay.textContent = points;
+      }
+    });
+
+    uploadBtn.onclick = async () => {
+      const file = photoInput.files[0];
+      if (!file) return alert("Please select a photo first!");
+
+      // For MVP: just simulate upload and add points
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.classList.add("uploaded");
+        gallery.appendChild(img);
+
+        points += 10;
+        pointsDisplay.textContent = points;
+        await updateDoc(userDocRef, { points });
+        alert("✅ Photo uploaded! You earned 10 points.");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    logoutBtn.onclick = async () => {
+      await signOut(auth);
+      window.location = "index.html";
+    };
+  </script>
+</body>
+</html>

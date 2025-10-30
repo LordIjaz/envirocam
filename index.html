@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoHero - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="auth-container">
+    <h1>🌊 EcoHero</h1>
+    <div id="auth-box">
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button id="signup-btn">Sign Up</button>
+      <button id="login-btn">Login</button>
+      <p id="message"></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const signupBtn = document.getElementById("signup-btn");
+    const loginBtn = document.getElementById("login-btn");
+    const message = document.getElementById("message");
+
+    signupBtn.onclick = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        // Create user doc in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          points: 0,
+          createdAt: new Date()
+        });
+        message.textContent = "✅ Account created! Redirecting...";
+        setTimeout(() => window.location = "app.html", 1000);
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    };
+
+    loginBtn.onclick = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "✅ Login successful! Redirecting...";
+        setTimeout(() => window.location = "app.html", 1000);
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #e7f5f1;
+  margin: 0;
+  text-align: center;
+}
+header {
+  background: #2e8b57;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logout {
+  background: white;
+  color: #2e8b57;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.auth-container, .app-container {
+  background: white;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 400px;
+}
+input, button {
+  width: 100%;
+  margin: 0.4rem 0;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+button {
+  background: #2e8b57;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:hover {
+  background: #256c46;
+}
+.uploaded {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #2e8b57;
+  margin: 6px;
+}
