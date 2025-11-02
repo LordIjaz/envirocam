@@ -122,7 +122,9 @@
     import { 
       getAuth, 
       onAuthStateChanged, 
-      signOut 
+      signOut, 
+      setPersistence, 
+      browserLocalPersistence 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { 
       getFirestore, 
@@ -130,26 +132,26 @@
       getDoc, 
       setDoc, 
       updateDoc, 
-      arrayUnion, 
       getDocs, 
       collection, 
       query, 
       orderBy 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // --- Your Firebase Config ---
+    // --- Firebase Config ---
     const firebaseConfig = {
-  apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
-  authDomain: "envirocam-5e2b4.firebaseapp.com",
-  projectId: "envirocam-5e2b4",
-  storageBucket: "envirocam-5e2b4.firebasestorage.app",
-  messagingSenderId: "1008928914623",
-  appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
-  measurementId: "G-F2KSK44YT6"
-};
+      apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+      authDomain: "envirocam-5e2b4.firebaseapp.com",
+      projectId: "envirocam-5e2b4",
+      storageBucket: "envirocam-5e2b4.appspot.com",
+      messagingSenderId: "1008928914623",
+      appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+      measurementId: "G-F2KSK44YT6"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    await setPersistence(auth, browserLocalPersistence);
     const db = getFirestore(app);
 
     const userEmail = document.getElementById("userEmail");
@@ -160,7 +162,7 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const leaderboardList = document.getElementById("leaderboardList");
 
-    // --- Listen for auth state changes ---
+    // --- Auth State Listener ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         userEmail.textContent = "Signed in as: " + user.email;
@@ -169,7 +171,7 @@
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) {
-          await setDoc(userRef, { points: 0, uploads: [] });
+          await setDoc(userRef, { points: 0, uploads: [], email: user.email });
           pointsDisplay.textContent = 0;
         } else {
           const data = docSnap.data();
@@ -198,17 +200,16 @@
         const userRef = doc(db, "users", user.uid);
 
         const docSnap = await getDoc(userRef);
-        let data = docSnap.data() || { points: 0, uploads: [] };
+        let data = docSnap.data() || { points: 0, uploads: [], email: user.email };
 
         const newPoints = (data.points || 0) + 10;
         const newUploads = [...(data.uploads || []), imageData];
 
-        await updateDoc(userRef, {
+        // Update points and uploads together
+        await setDoc(userRef, {
           points: newPoints,
-          uploads: arrayUnion(imageData)
-        }).catch(async () => {
-          // fallback if user doc doesn't exist yet
-          await setDoc(userRef, { points: newPoints, uploads: newUploads });
+          uploads: newUploads,
+          email: user.email
         });
 
         pointsDisplay.textContent = newPoints;
@@ -230,15 +231,16 @@
       });
     }
 
-    // --- Load leaderboard from all users ---
+    // --- Load leaderboard ---
     async function loadLeaderboard() {
       leaderboardList.innerHTML = "";
       const q = query(collection(db, "users"), orderBy("points", "desc"));
       const snapshot = await getDocs(q);
       snapshot.forEach(docSnap => {
         const user = docSnap.data();
+        const username = user.email ? user.email.split("@")[0] : docSnap.id.substring(0,6);
         const li = document.createElement("li");
-        li.textContent = `${docSnap.id.substring(0, 6)}... – ${user.points || 0} pts`;
+        li.textContent = `${username} – ${user.points || 0} pts`;
         leaderboardList.appendChild(li);
       });
     }
@@ -251,4 +253,5 @@
   </script>
 </body>
 </html>
+
 
