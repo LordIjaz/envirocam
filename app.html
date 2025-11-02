@@ -113,31 +113,43 @@
 
     <div class="leaderboard">
       <h3>🌎 Global Leaderboard</h3>
-      <ul id="leaderboardList">
-        <li>Maria – 240 pts</li>
-        <li>Kenji – 180 pts</li>
-        <li>Sofia – 160 pts</li>
-      </ul>
+      <ul id="leaderboardList"></ul>
     </div>
   </main>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      setDoc, 
+      updateDoc, 
+      arrayUnion, 
+      getDocs, 
+      collection, 
+      query, 
+      orderBy 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // --- Your Firebase Config (replace with your own) ---
+    // --- Your Firebase Config ---
     const firebaseConfig = {
-  apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
-  authDomain: "envirocam-5e2b4.firebaseapp.com",
-  projectId: "envirocam-5e2b4",
-  storageBucket: "envirocam-5e2b4.firebasestorage.app",
-  messagingSenderId: "1008928914623",
-  appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
-  measurementId: "G-F2KSK44YT6"
-};
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     const userEmail = document.getElementById("userEmail");
     const pointsDisplay = document.getElementById("points");
@@ -145,25 +157,33 @@
     const photoUpload = document.getElementById("photoUpload");
     const gallery = document.getElementById("gallery");
     const logoutBtn = document.getElementById("logoutBtn");
+    const leaderboardList = document.getElementById("leaderboardList");
 
-    // --- Local Storage Management ---
-    let userData = JSON.parse(localStorage.getItem("envirocamUser")) || { points: 0, uploads: [] };
-
-    const saveUserData = () => localStorage.setItem("envirocamUser", JSON.stringify(userData));
-
-    // --- Check Authentication State ---
-    onAuthStateChanged(auth, (user) => {
+    // --- Listen for auth state changes ---
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         userEmail.textContent = "Signed in as: " + user.email;
-        pointsDisplay.textContent = userData.points;
-        renderGallery();
+
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (!docSnap.exists()) {
+          await setDoc(userRef, { points: 0, uploads: [] });
+          pointsDisplay.textContent = 0;
+        } else {
+          const data = docSnap.data();
+          pointsDisplay.textContent = data.points || 0;
+          renderGallery(data.uploads || []);
+        }
+
+        loadLeaderboard();
       } else {
         window.location.href = "index.html";
       }
     });
 
-    // --- Upload Photo ---
-    uploadBtn.addEventListener("click", () => {
+    // --- Upload a photo ---
+    uploadBtn.addEventListener("click", async () => {
       const file = photoUpload.files[0];
       if (!file) {
         alert("Please select a photo first!");
@@ -171,35 +191,63 @@
       }
 
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = async function(e) {
         const imageData = e.target.result;
-        userData.uploads.push(imageData);
-        userData.points += 10;
-        saveUserData();
-        pointsDisplay.textContent = userData.points;
-        renderGallery();
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+
+        const docSnap = await getDoc(userRef);
+        let data = docSnap.data() || { points: 0, uploads: [] };
+
+        const newPoints = (data.points || 0) + 10;
+        const newUploads = [...(data.uploads || []), imageData];
+
+        await updateDoc(userRef, {
+          points: newPoints,
+          uploads: arrayUnion(imageData)
+        }).catch(async () => {
+          // fallback if user doc doesn't exist yet
+          await setDoc(userRef, { points: newPoints, uploads: newUploads });
+        });
+
+        pointsDisplay.textContent = newPoints;
+        renderGallery(newUploads);
         alert("Photo uploaded! +10 points 🪸");
+        loadLeaderboard();
       };
       reader.readAsDataURL(file);
       photoUpload.value = "";
     });
 
-    // --- Render Uploaded Photos ---
-    function renderGallery() {
+    // --- Render user's uploaded photos ---
+    function renderGallery(uploads) {
       gallery.innerHTML = "";
-      userData.uploads.forEach(img => {
+      uploads.forEach(img => {
         const image = document.createElement("img");
         image.src = img;
         gallery.appendChild(image);
       });
     }
 
+    // --- Load leaderboard from all users ---
+    async function loadLeaderboard() {
+      leaderboardList.innerHTML = "";
+      const q = query(collection(db, "users"), orderBy("points", "desc"));
+      const snapshot = await getDocs(q);
+      snapshot.forEach(docSnap => {
+        const user = docSnap.data();
+        const li = document.createElement("li");
+        li.textContent = `${docSnap.id.substring(0, 6)}... – ${user.points || 0} pts`;
+        leaderboardList.appendChild(li);
+      });
+    }
+
     // --- Logout ---
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
-      localStorage.removeItem("envirocamUser");
       window.location.href = "index.html";
     });
   </script>
 </body>
 </html>
+
