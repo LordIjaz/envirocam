@@ -1,66 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>EcoHero - Login</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnviroCam 🌍</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #a7ff83, #17b978);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      color: #17b978;
+      margin-bottom: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #17b978;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background-color: #139e66;
+    }
+    .switch {
+      margin-top: 1rem;
+      color: #333;
+    }
+    .switch span {
+      color: #17b978;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <main class="auth-container">
-    <h1>🌊 EcoHero</h1>
-    <div id="auth-box">
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password" />
-      <button id="signup-btn">Sign Up</button>
-      <button id="login-btn">Login</button>
-      <p id="message"></p>
+
+  <div class="container">
+    <h1>EnviroCam 🌿</h1>
+
+    <!-- Signup Form -->
+    <form id="signupForm">
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <!-- Login Form -->
+    <form id="loginForm" style="display: none;">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+
+    <div class="switch">
+      <p id="switchText">Already have an account? <span id="switchToLogin">Log In</span></p>
     </div>
-  </main>
+  </div>
 
   <script type="module">
-    import { auth, db } from './firebase-config.js';
+    // --- Import Firebase Modules from CDN ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { 
+      getAuth, 
       createUserWithEmailAndPassword, 
       signInWithEmailAndPassword 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const signupBtn = document.getElementById("signup-btn");
-    const loginBtn = document.getElementById("login-btn");
-    const message = document.getElementById("message");
+    // --- Your Firebase Configuration (Replace with yours) ---
+    const firebaseConfig = {
+  apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+  authDomain: "envirocam-5e2b4.firebaseapp.com",
+  projectId: "envirocam-5e2b4",
+  storageBucket: "envirocam-5e2b4.firebasestorage.app",
+  messagingSenderId: "1008928914623",
+  appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+  measurementId: "G-F2KSK44YT6"
+};
 
-    signupBtn.onclick = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    // --- Initialize Firebase ---
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        // Create user doc in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          email: user.email,
-          points: 0,
-          createdAt: new Date()
-        });
-        message.textContent = "✅ Account created! Redirecting...";
-        setTimeout(() => window.location = "app.html", 1000);
-      } catch (error) {
-        message.textContent = error.message;
+    // --- Switch between Login and Signup ---
+    const signupForm = document.getElementById("signupForm");
+    const loginForm = document.getElementById("loginForm");
+    const switchText = document.getElementById("switchText");
+    const switchToLogin = document.getElementById("switchToLogin");
+
+    switchToLogin.addEventListener("click", () => {
+      const isLoginVisible = loginForm.style.display === "block";
+      if (isLoginVisible) {
+        loginForm.style.display = "none";
+        signupForm.style.display = "block";
+        switchText.innerHTML = 'Already have an account? <span id="switchToLogin">Log In</span>';
+      } else {
+        signupForm.style.display = "none";
+        loginForm.style.display = "block";
+        switchText.innerHTML = 'Don’t have an account? <span id="switchToLogin">Sign Up</span>';
       }
-    };
+      // rebind the event each time
+      document.querySelector("#switchToLogin").addEventListener("click", () => switchToLogin.click());
+    });
 
-    loginBtn.onclick = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    // --- Signup ---
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Welcome to EnviroCam! Account created successfully 🌍");
+        window.location.href = "app.html"; // next page (placeholder)
+      } catch (error) {
+        alert(error.message);
+      }
+    });
 
+    // --- Login ---
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        message.textContent = "✅ Login successful! Redirecting...";
-        setTimeout(() => window.location = "app.html", 1000);
+        alert("Welcome back 🌿");
+        window.location.href = "app.html";
       } catch (error) {
-        message.textContent = error.message;
+        alert(error.message);
       }
-    };
+    });
   </script>
 </body>
 </html>
