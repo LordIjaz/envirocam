@@ -131,12 +131,17 @@
       doc, 
       getDoc, 
       setDoc, 
-      updateDoc, 
       getDocs, 
       collection, 
       query, 
       orderBy 
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { 
+      getStorage, 
+      ref as storageRef, 
+      uploadBytes, 
+      getDownloadURL 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
     // --- Firebase Config ---
     const firebaseConfig = {
@@ -153,6 +158,7 @@
     const auth = getAuth(app);
     await setPersistence(auth, browserLocalPersistence);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     const userEmail = document.getElementById("userEmail");
     const pointsDisplay = document.getElementById("points");
@@ -185,49 +191,47 @@
       }
     });
 
-    // --- Upload a photo ---
+    // --- Upload a photo to Storage ---
     uploadBtn.addEventListener("click", async () => {
       const file = photoUpload.files[0];
-      if (!file) {
-        alert("Please select a photo first!");
-        return;
-      }
+      if (!file) return alert("Please select a photo first!");
 
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        const imageData = e.target.result;
-        const user = auth.currentUser;
-        const userRef = doc(db, "users", user.uid);
+      const user = auth.currentUser;
+      const userRef = doc(db, "users", user.uid);
 
-        const docSnap = await getDoc(userRef);
-        let data = docSnap.data() || { points: 0, uploads: [], email: user.email };
+      // Upload file to Firebase Storage
+      const fileRef = storageRef(storage, `uploads/${user.uid}/${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
 
-        const newPoints = (data.points || 0) + 10;
-        const newUploads = [...(data.uploads || []), imageData];
+      // Get download URL
+      const url = await getDownloadURL(fileRef);
 
-        // Update points and uploads together
-        await setDoc(userRef, {
-          points: newPoints,
-          uploads: newUploads,
-          email: user.email
-        });
+      // Update Firestore with points and photo URL
+      const docSnap = await getDoc(userRef);
+      let data = docSnap.data() || { points: 0, uploads: [], email: user.email };
+      const newPoints = (data.points || 0) + 10;
+      const newUploads = [...(data.uploads || []), url];
 
-        pointsDisplay.textContent = newPoints;
-        renderGallery(newUploads);
-        alert("Photo uploaded! +10 points 🪸");
-        loadLeaderboard();
-      };
-      reader.readAsDataURL(file);
+      await setDoc(userRef, {
+        points: newPoints,
+        uploads: newUploads,
+        email: user.email
+      });
+
+      pointsDisplay.textContent = newPoints;
+      renderGallery(newUploads);
+      alert("Photo uploaded! +10 points 🪸");
+      loadLeaderboard();
       photoUpload.value = "";
     });
 
     // --- Render user's uploaded photos ---
     function renderGallery(uploads) {
       gallery.innerHTML = "";
-      uploads.forEach(img => {
-        const image = document.createElement("img");
-        image.src = img;
-        gallery.appendChild(image);
+      uploads.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        gallery.appendChild(img);
       });
     }
 
@@ -253,6 +257,7 @@
   </script>
 </body>
 </html>
+
 
 
 
