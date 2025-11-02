@@ -131,7 +131,6 @@
       doc, 
       getDoc, 
       setDoc, 
-      updateDoc, 
       getDocs, 
       collection, 
       query, 
@@ -203,11 +202,11 @@
       }
     });
 
-    // --- Upload a photo ---
+    // --- Upload photo directly to Firestore ---
     uploadBtn.addEventListener("click", async () => {
       const file = photoUpload.files[0];
       if (!file) { alert("Select a photo first!"); return; }
-      const imageData = await resizeImage(file); // resize before saving
+      const imageData = await resizeImage(file); // resize in browser
 
       const user = auth.currentUser;
       const userRef = doc(db, "users", user.uid);
@@ -222,11 +221,11 @@
       pointsDisplay.textContent = newPoints;
       renderGallery(newUploads);
       alert("Photo uploaded! +10 points 🪸");
-      loadLeaderboard();
       photoUpload.value = "";
+      loadLeaderboard();
     });
 
-    // --- Render user's uploaded photos ---
+    // --- Render gallery ---
     function renderGallery(uploads) {
       gallery.innerHTML = "";
       uploads.forEach(img => {
@@ -258,6 +257,7 @@
   </script>
 </body>
 </html>
+
 
 
 
