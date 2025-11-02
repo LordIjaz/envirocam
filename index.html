@@ -26,30 +26,16 @@
       padding: 3rem;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 30px #d4af37, 0 0 60px #ffd70033;
+      box-shadow: 0 0 15px #d4af3755;
       position: relative;
-      overflow: hidden;
-    }
-
-    /* Neon glow effect */
-    .container::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, #ffd70055, transparent 70%);
-      transform: rotate(30deg);
-      pointer-events: none;
     }
 
     h1 {
       text-align: center;
       color: #ffd700;
-      font-size: 2.2rem;
+      font-size: 2rem;
       margin-bottom: 2rem;
-      text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd70088;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.5);
     }
 
     /* ===== Forms ===== */
@@ -62,14 +48,13 @@
     input {
       padding: 0.9rem;
       border-radius: 10px;
-      border: none;
-      background: #222;
+      border: 2px solid #fff;
+      background: #111;
       color: #ffd700;
       font-weight: bold;
       font-size: 1rem;
       outline: none;
-      transition: all 0.3s ease;
-      box-shadow: inset 0 0 10px #000;
+      transition: all 0.2s ease;
     }
 
     input::placeholder {
@@ -78,27 +63,26 @@
     }
 
     input:focus {
-      box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd70088;
-      background: #111;
+      border-color: #ffd700;
+      color: #fff;
     }
 
     button {
       padding: 0.9rem;
       border-radius: 10px;
-      border: none;
+      border: 2px solid #ffd700;
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      background: linear-gradient(45deg, #ffd700, #d4af37);
-      color: #111;
-      text-shadow: 0 0 5px #000;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px #ffd70088;
+      background: #111;
+      color: #ffd700;
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 15px #ffd700, 0 0 30px #ffd70088;
+      background: #ffd700;
+      color: #111;
+      border-color: #fff;
     }
 
     /* ===== Switch Forms ===== */
@@ -113,7 +97,6 @@
       color: #ffd700;
       cursor: pointer;
       font-weight: bold;
-      text-shadow: 0 0 5px #ffd700aa;
     }
 
     /* ===== Google Button ===== */
@@ -122,22 +105,21 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      background: #000;
+      background: #111;
       color: #ffd700;
       padding: 0.9rem;
       border-radius: 10px;
-      border: 2px solid #d4af37;
+      border: 2px solid #ffd700;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       margin-top: 1rem;
-      box-shadow: 0 0 10px #ffd70088;
     }
 
     .google-btn:hover {
-      background: #111;
-      box-shadow: 0 0 15px #ffd700, 0 0 30px #ffd700aa;
-      transform: translateY(-2px);
+      background: #ffd700;
+      color: #111;
+      border-color: #fff;
     }
 
     .google-btn img {
@@ -167,7 +149,7 @@
 
     <!-- Google Sign-In -->
     <button class="google-btn" id="googleSignIn">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G logo" />
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" />
       Sign in with Google
     </button>
 
@@ -208,13 +190,14 @@
 
     // Switch forms
     switchToLogin.addEventListener("click", () => {
-      const isLoginVisible = loginForm.style.display === "block";
-      if (isLoginVisible) {
+      if (loginForm.style.display === "block") {
         loginForm.style.display = "none";
         signupForm.style.display = "block";
         switchText.innerHTML = 'Already have an account? <span id="switchToLogin">Log In</span>';
       } else {
-        signupForm.style.display = "block"; // default fallback
+        loginForm.style.display = "block";
+        signupForm.style.display = "none";
+        switchText.innerHTML = 'Don’t have an account? <span id="switchToLogin">Sign Up</span>';
       }
     });
 
@@ -256,4 +239,5 @@
   </script>
 </body>
 </html>
+
 
