@@ -57,6 +57,13 @@
       cursor: pointer;
       font-weight: bold;
     }
+    .google-btn {
+      background-color: #4285F4;
+      margin-top: 0.5rem;
+    }
+    .google-btn:hover {
+      background-color: #357ae8;
+    }
   </style>
 </head>
 <body>
@@ -78,41 +85,45 @@
       <button type="submit">Log In</button>
     </form>
 
+    <!-- Google Sign In Button -->
+    <button id="googleBtn" class="google-btn">Sign in with Google</button>
+
     <div class="switch">
       <p id="switchText">Already have an account? <span id="switchToLogin">Log In</span></p>
     </div>
   </div>
 
   <script type="module">
-    // --- Import Firebase Modules from CDN ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { 
       getAuth, 
       createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword 
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // --- Your Firebase Configuration (Replace with yours) ---
     const firebaseConfig = {
-  apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
-  authDomain: "envirocam-5e2b4.firebaseapp.com",
-  projectId: "envirocam-5e2b4",
-  storageBucket: "envirocam-5e2b4.firebasestorage.app",
-  messagingSenderId: "1008928914623",
-  appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
-  measurementId: "G-F2KSK44YT6"
-};
+      apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+      authDomain: "envirocam-5e2b4.firebaseapp.com",
+      projectId: "envirocam-5e2b4",
+      storageBucket: "envirocam-5e2b4.appspot.com",
+      messagingSenderId: "1008928914623",
+      appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+      measurementId: "G-F2KSK44YT6"
+    };
 
-    // --- Initialize Firebase ---
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    // --- Switch between Login and Signup ---
     const signupForm = document.getElementById("signupForm");
     const loginForm = document.getElementById("loginForm");
     const switchText = document.getElementById("switchText");
     const switchToLogin = document.getElementById("switchToLogin");
+    const googleBtn = document.getElementById("googleBtn");
 
+    // --- Switch between Login and Signup ---
     switchToLogin.addEventListener("click", () => {
       const isLoginVisible = loginForm.style.display === "block";
       if (isLoginVisible) {
@@ -124,7 +135,6 @@
         loginForm.style.display = "block";
         switchText.innerHTML = 'Don’t have an account? <span id="switchToLogin">Sign Up</span>';
       }
-      // rebind the event each time
       document.querySelector("#switchToLogin").addEventListener("click", () => switchToLogin.click());
     });
 
@@ -136,7 +146,7 @@
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         alert("Welcome to EnviroCam! Account created successfully 🌍");
-        window.location.href = "app.html"; // next page (placeholder)
+        window.location.href = "app.html";
       } catch (error) {
         alert(error.message);
       }
@@ -150,6 +160,18 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Welcome back 🌿");
+        window.location.href = "app.html";
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    // --- Google Sign In ---
+    googleBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        alert(`Welcome ${user.displayName} 🌿`);
         window.location.href = "app.html";
       } catch (error) {
         alert(error.message);
