@@ -2,83 +2,204 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>EcoHero - App</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnviroCam Dashboard 🌍</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #a7ff83, #17b978);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      color: #17b978;
+      margin: 0;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .user-info {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .points {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #17b978;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 1rem auto;
+    }
+    button {
+      background: #17b978;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: bold;
+      display: block;
+      margin: 1rem auto;
+    }
+    button:hover {
+      background: #139e66;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      height: 120px;
+    }
+    .leaderboard {
+      margin-top: 2rem;
+    }
+    .leaderboard h3 {
+      color: #17b978;
+      border-bottom: 2px solid #17b978;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+    .leaderboard li {
+      background: #f3f3f3;
+      padding: 0.6rem 1rem;
+      margin: 0.4rem 0;
+      border-radius: 0.5rem;
+    }
+  </style>
 </head>
 <body>
   <header>
-    🌊 EcoHero
-    <button id="logout-btn" class="logout">Logout</button>
+    <h1>EnviroCam 🌿</h1>
+    <button id="logoutBtn">Log Out</button>
   </header>
 
-  <main class="app-container">
-    <h2>Welcome, <span id="user-email"></span> 👋</h2>
-    <p>Total Points: <strong id="points">0</strong></p>
+  <main>
+    <div class="user-info">
+      <p id="userEmail">Loading user...</p>
+      <p class="points">Your Points: <span id="points">0</span></p>
+    </div>
 
-    <h3>Upload Cleanup Photo</h3>
-    <input type="file" id="photo-input" accept="image/*">
-    <button id="upload-btn">Upload</button>
-    <div id="gallery"></div>
+    <div class="upload-section">
+      <h3>Upload Your Cleanup Photo 📸</h3>
+      <input type="file" id="photoUpload" accept="image/*" />
+      <button id="uploadBtn">Upload</button>
+      <div class="gallery" id="gallery"></div>
+    </div>
+
+    <div class="leaderboard">
+      <h3>🌎 Global Leaderboard</h3>
+      <ul id="leaderboardList">
+        <li>Maria – 240 pts</li>
+        <li>Kenji – 180 pts</li>
+        <li>Sofia – 160 pts</li>
+      </ul>
+    </div>
   </main>
 
   <script type="module">
-    import { auth, db } from './firebase-config.js';
-    import { 
-      onAuthStateChanged, 
-      signOut 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { 
-      doc, getDoc, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    const userEmail = document.getElementById("user-email");
+    // --- Your Firebase Config (replace with your own) ---
+    const firebaseConfig = {
+  apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+  authDomain: "envirocam-5e2b4.firebaseapp.com",
+  projectId: "envirocam-5e2b4",
+  storageBucket: "envirocam-5e2b4.firebasestorage.app",
+  messagingSenderId: "1008928914623",
+  appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+  measurementId: "G-F2KSK44YT6"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const userEmail = document.getElementById("userEmail");
     const pointsDisplay = document.getElementById("points");
-    const uploadBtn = document.getElementById("upload-btn");
-    const logoutBtn = document.getElementById("logout-btn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const photoUpload = document.getElementById("photoUpload");
     const gallery = document.getElementById("gallery");
-    const photoInput = document.getElementById("photo-input");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    let currentUser, userDocRef, points = 0;
+    // --- Local Storage Management ---
+    let userData = JSON.parse(localStorage.getItem("envirocamUser")) || { points: 0, uploads: [] };
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location = "index.html";
-        return;
-      }
-      currentUser = user;
-      userEmail.textContent = user.email;
-      userDocRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userDocRef);
-      if (snap.exists()) {
-        points = snap.data().points || 0;
-        pointsDisplay.textContent = points;
+    const saveUserData = () => localStorage.setItem("envirocamUser", JSON.stringify(userData));
+
+    // --- Check Authentication State ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userEmail.textContent = "Signed in as: " + user.email;
+        pointsDisplay.textContent = userData.points;
+        renderGallery();
+      } else {
+        window.location.href = "index.html";
       }
     });
 
-    uploadBtn.onclick = async () => {
-      const file = photoInput.files[0];
-      if (!file) return alert("Please select a photo first!");
+    // --- Upload Photo ---
+    uploadBtn.addEventListener("click", () => {
+      const file = photoUpload.files[0];
+      if (!file) {
+        alert("Please select a photo first!");
+        return;
+      }
 
-      // For MVP: just simulate upload and add points
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        img.classList.add("uploaded");
-        gallery.appendChild(img);
-
-        points += 10;
-        pointsDisplay.textContent = points;
-        await updateDoc(userDocRef, { points });
-        alert("✅ Photo uploaded! You earned 10 points.");
+      reader.onload = function (e) {
+        const imageData = e.target.result;
+        userData.uploads.push(imageData);
+        userData.points += 10;
+        saveUserData();
+        pointsDisplay.textContent = userData.points;
+        renderGallery();
+        alert("Photo uploaded! +10 points 🪸");
       };
       reader.readAsDataURL(file);
-    };
+      photoUpload.value = "";
+    });
 
-    logoutBtn.onclick = async () => {
+    // --- Render Uploaded Photos ---
+    function renderGallery() {
+      gallery.innerHTML = "";
+      userData.uploads.forEach(img => {
+        const image = document.createElement("img");
+        image.src = img;
+        gallery.appendChild(image);
+      });
+    }
+
+    // --- Logout ---
+    logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
-      window.location = "index.html";
-    };
+      localStorage.removeItem("envirocamUser");
+      window.location.href = "index.html";
+    });
   </script>
 </body>
 </html>
