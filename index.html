@@ -208,7 +208,7 @@
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         alert("Welcome to EnviroCam 🌊");
-        window.location.href = "app.html";
+        window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
       }
@@ -221,7 +221,7 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         alert("Welcome back 🌿");
-        window.location.href = "app.html";
+        window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
       }
@@ -230,7 +230,7 @@
     document.getElementById("googleSignIn").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "app.html";
+        window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
       }
@@ -239,7 +239,7 @@
     document.getElementById("googleLogin").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "app.html";
+        window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
       }
