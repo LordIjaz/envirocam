@@ -3,141 +3,141 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EnviroCam 🌍 | Login</title>
+  <title>EnviroCam 🌊</title>
   <style>
-    /* ===== Body & Background ===== */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
     body {
-      font-family: 'Poppins', sans-serif;
       margin: 0;
-      padding: 0;
       height: 100vh;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at center, #000000 70%, #1a1a1a 100%);
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at top, #0b0b0b, #1a1a1a);
-      color: #fff;
-    }
-
-    /* ===== Container ===== */
-    .container {
-      background: #111;
-      border: 2px solid #d4af37; /* gold border */
-      border-radius: 20px;
-      padding: 3rem;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 15px #d4af3755;
       position: relative;
     }
 
-    h1 {
-      text-align: center;
-      color: #ffd700;
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    /* Floating logo background */
+    #floatingLogo {
+      position: absolute;
+      width: 180px;
+      height: auto;
+      opacity: 0.2;
+      filter: drop-shadow(0 0 15px gold);
+      z-index: 0;
+      pointer-events: none;
     }
 
-    /* ===== Forms ===== */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    /* Center container */
+    .container {
+      position: relative;
+      z-index: 2;
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid gold;
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      color: gold;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
     }
 
     input {
-      padding: 0.9rem;
-      border-radius: 10px;
-      border: 2px solid #fff;
-      background: #111;
-      color: #ffd700;
-      font-weight: bold;
-      font-size: 1rem;
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #555;
+      border-radius: 0.5rem;
+      background: #0a0a0a;
+      color: white;
       outline: none;
-      transition: all 0.2s ease;
-    }
-
-    input::placeholder {
-      color: #d4af37aa;
-      font-weight: normal;
+      font-size: 1rem;
+      transition: border 0.3s;
     }
 
     input:focus {
-      border-color: #ffd700;
-      color: #fff;
+      border: 1px solid gold;
+      box-shadow: 0 0 8px gold;
     }
 
     button {
-      padding: 0.9rem;
-      border-radius: 10px;
-      border: 2px solid #ffd700;
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(90deg, #b8860b, #ffd700);
+      color: #000;
       font-weight: bold;
-      font-size: 1rem;
       cursor: pointer;
-      background: #111;
-      color: #ffd700;
-      transition: all 0.2s ease;
+      font-size: 1rem;
+      margin-top: 1rem;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
 
     button:hover {
-      background: #ffd700;
-      color: #111;
-      border-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px gold;
     }
 
-    /* ===== Switch Forms ===== */
     .switch {
       margin-top: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #d4af37aa;
+      color: #ccc;
     }
 
     .switch span {
-      color: #ffd700;
+      color: gold;
       cursor: pointer;
       font-weight: bold;
     }
 
-    /* ===== Google Button ===== */
-    .google-btn {
+    /* Google Sign-in Button */
+    #googleSignIn {
+      background: #000;
+      color: gold;
+      border: 1px solid gold;
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      background: #111;
-      color: #ffd700;
-      padding: 0.9rem;
-      border-radius: 10px;
-      border: 2px solid #ffd700;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 1rem;
+      align-items: center;
+      gap: 10px;
     }
 
-    .google-btn:hover {
-      background: #ffd700;
-      color: #111;
-      border-color: #fff;
+    #googleSignIn img {
+      width: 22px;
+      height: 22px;
     }
 
-    .google-btn img {
-      width: 20px;
-      height: 20px;
+    #googleSignIn:hover {
+      background: gold;
+      color: #000;
     }
   </style>
 </head>
 <body>
+  <img id="floatingLogo" src="envirocam-logo.png" alt="EnviroCam Logo" />
 
   <div class="container">
-    <h1>EnviroCam 🌿</h1>
+    <h1>EnviroCam</h1>
 
     <!-- Signup Form -->
     <form id="signupForm">
       <input type="email" id="signupEmail" placeholder="Email" required />
       <input type="password" id="signupPassword" placeholder="Password" required />
       <button type="submit">Sign Up</button>
+      <button type="button" id="googleSignIn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+        Sign Up with Google
+      </button>
     </form>
 
     <!-- Login Form -->
@@ -145,16 +145,16 @@
       <input type="email" id="loginEmail" placeholder="Email" required />
       <input type="password" id="loginPassword" placeholder="Password" required />
       <button type="submit">Log In</button>
+      <button type="button" id="googleLogin">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+        Log In with Google
+      </button>
     </form>
 
-    <!-- Google Sign-In -->
-    <button class="google-btn" id="googleSignIn">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" />
-      Sign in with Google
-    </button>
-
     <div class="switch">
-      <p id="switchText">Already have an account? <span id="switchToLogin">Log In</span></p>
+      <p id="switchText">
+        Already have an account? <span id="switchToLogin">Log In</span>
+      </p>
     </div>
   </div>
 
@@ -163,16 +163,16 @@
     import { 
       getAuth, 
       createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, 
-      GoogleAuthProvider, 
-      signInWithPopup 
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
       authDomain: "envirocam-5e2b4.firebaseapp.com",
       projectId: "envirocam-5e2b4",
-      storageBucket: "envirocam-5e2b4.appspot.com",
+      storageBucket: "envirocam-5e2b4.firebasestorage.app",
       messagingSenderId: "1008928914623",
       appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
       measurementId: "G-F2KSK44YT6"
@@ -186,49 +186,48 @@
     const loginForm = document.getElementById("loginForm");
     const switchText = document.getElementById("switchText");
     const switchToLogin = document.getElementById("switchToLogin");
-    const googleSignIn = document.getElementById("googleSignIn");
 
-    // Switch forms
     switchToLogin.addEventListener("click", () => {
-      if (loginForm.style.display === "block") {
+      const isLoginVisible = loginForm.style.display === "block";
+      if (isLoginVisible) {
         loginForm.style.display = "none";
         signupForm.style.display = "block";
         switchText.innerHTML = 'Already have an account? <span id="switchToLogin">Log In</span>';
       } else {
-        loginForm.style.display = "block";
         signupForm.style.display = "none";
+        loginForm.style.display = "block";
         switchText.innerHTML = 'Don’t have an account? <span id="switchToLogin">Sign Up</span>';
       }
+      document.querySelector("#switchToLogin").addEventListener("click", () => switchToLogin.click());
     });
 
-    // Signup
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
       try {
         await createUserWithEmailAndPassword(auth, email, password);
+        alert("Welcome to EnviroCam 🌊");
         window.location.href = "app.html";
       } catch (error) {
         alert(error.message);
       }
     });
 
-    // Login
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        alert("Welcome back 🌿");
         window.location.href = "app.html";
       } catch (error) {
         alert(error.message);
       }
     });
 
-    // Google Sign-In
-    googleSignIn.addEventListener("click", async () => {
+    document.getElementById("googleSignIn").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
         window.location.href = "app.html";
@@ -236,8 +235,43 @@
         alert(error.message);
       }
     });
+
+    document.getElementById("googleLogin").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+        window.location.href = "app.html";
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    // --- Floating Logo Movement ---
+    const logo = document.getElementById("floatingLogo");
+    let x = 50, y = 50;
+    let dx = 2, dy = 1.5;
+
+    function animateLogo() {
+      const rect = logo.getBoundingClientRect();
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      x += dx;
+      y += dy;
+
+      if (x <= 0 || x + rect.width >= screenWidth) dx = -dx;
+      if (y <= 0 || y + rect.height >= screenHeight) dy = -dy;
+
+      logo.style.left = x + "px";
+      logo.style.top = y + "px";
+
+      requestAnimationFrame(animateLogo);
+    }
+
+    logo.style.position = "absolute";
+    logo.style.left = x + "px";
+    logo.style.top = y + "px";
+    animateLogo();
   </script>
 </body>
 </html>
-
 
