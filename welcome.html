@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to EnviroCam 🌊</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at center, #000000 70%, #0a0a0a 100%);
+      color: #fefefe;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Subtle floating gold particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.ibb.co/6w4wYqv/gold-particles.gif') center/cover no-repeat;
+      opacity: 0.12;
+      z-index: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    header img {
+      width: 130px;
+      height: auto;
+      filter: drop-shadow(0 0 20px gold);
+      margin-bottom: 1rem;
+      animation: floatLogo 6s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    header h1 {
+      color: gold;
+      font-size: 2rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: rgba(20, 20, 20, 0.9);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      color: gold;
+      border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+      display: inline-block;
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    p, li {
+      color: #dcdcdc;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li::before {
+      content: "✦ ";
+      color: gold;
+      font-weight: bold;
+    }
+
+    .rules {
+      background: rgba(255, 215, 0, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 0.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    button {
+      background: linear-gradient(90deg, #b8860b, #ffd700);
+      color: #000;
+      border: none;
+      border-radius: 0.6rem;
+      padding: 1rem 2rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      box-shadow: 0 0 30px gold;
+      transform: translateY(-3px);
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+      margin: 2rem 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    main, header, footer {
+      animation: fadeIn 1.2s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="envirocam-logo.png" alt="EnviroCam Logo">
+    <h1>Welcome to EnviroCam 🌊</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>🌍 Our Mission</h2>
+      <p>
+        EnviroCam is a global initiative designed to encourage individuals to take action against ocean pollution.
+        By uploading real photos of yourself cleaning beaches, rivers, or oceans, you help restore our planet’s beauty —
+        and earn points while doing it.
+      </p>
+    </section>
+
+    <section>
+      <h2>🏆 Monthly Challenges</h2>
+      <p>
+        Each month, a new challenge encourages our community to focus on a specific type of cleanup.
+        Completing these challenges helps you climb the global leaderboard and unlock exclusive rewards.
+      </p>
+      <ul>
+        <li>Collect and properly dispose of plastic bottles this month.</li>
+        <li>Join local beach cleanups for bonus points.</li>
+        <li>Document your progress with authentic photos.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>💎 How to Earn Points</h2>
+      <ul>
+        <li>+10 points per verified cleanup photo you upload.</li>
+        <li>+25 bonus points for completing monthly challenges.</li>
+        <li>Top 10 contributors each month are featured on the global leaderboard.</li>
+      </ul>
+    </section>
+
+    <section class="rules">
+      <h2>⚖️ Rules & Guidelines</h2>
+      <ul>
+        <li>All uploads must be original photos taken by you during a cleanup activity.</li>
+        <li>Do <strong>not</strong> upload photos found online or from others — authenticity matters.</li>
+        <li>Ensure safety during cleanups. Avoid dangerous locations or materials.</li>
+        <li>Respect nature and wildlife — collect waste responsibly.</li>
+        <li>Inappropriate or misleading uploads will result in disqualification.</li>
+      </ul>
+    </section>
+
+    <div class="button-container">
+      <button id="continueBtn">Continue to EnviroCam</button>
+    </div>
+  </main>
+
+  <footer>© 2025 EnviroCam. Protect the Planet 🌍</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+      authDomain: "envirocam-5e2b4.firebaseapp.com",
+      projectId: "envirocam-5e2b4",
+      storageBucket: "envirocam-5e2b4.appspot.com",
+      messagingSenderId: "1008928914623",
+      appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+      measurementId: "G-F2KSK44YT6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Prevent access if not signed in
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+      }
+    });
+
+    document.getElementById("continueBtn").addEventListener("click", () => {
+      window.location.href = "app.html";
+    });
+  </script>
+</body>
+</html>

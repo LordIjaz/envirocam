@@ -1,100 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EnviroCam Dashboard 🌍</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnviroCam Dashboard 🌊</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #a7ff83, #17b978);
       margin: 0;
       padding: 0;
-      color: #222;
+      background: radial-gradient(circle at center, #000000 70%, #111111 100%);
+      color: #f5f5f5;
+      overflow-x: hidden;
     }
+
     header {
-      background: white;
+      background: rgba(15, 15, 15, 0.95);
+      border-bottom: 2px solid gold;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
+
     h1 {
-      color: #17b978;
+      color: gold;
+      font-size: 1.8rem;
       margin: 0;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
     }
+
+    #logoutBtn {
+      background: linear-gradient(90deg, #b8860b, #ffd700);
+      color: #000;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    #logoutBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px gold;
+    }
+
     main {
-      max-width: 700px;
+      max-width: 800px;
       margin: 2rem auto;
-      background: white;
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 1.2rem;
+      padding: 2.5rem;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.2);
     }
+
     .user-info {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .user-info p {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      color: #ccc;
+    }
+
+    .points {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: gold;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    .upload-section {
       text-align: center;
       margin-bottom: 2rem;
     }
-    .points {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #17b978;
+
+    .upload-section h3 {
+      color: gold;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+      margin-bottom: 1rem;
     }
+
     input[type="file"] {
       display: block;
       margin: 1rem auto;
+      color: #ccc;
+      background: #000;
+      border: 1px solid gold;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      width: 80%;
+      text-align: center;
+      cursor: pointer;
     }
+
+    input[type="file"]::file-selector-button {
+      background: linear-gradient(90deg, #b8860b, #ffd700);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
     button {
-      background: #17b978;
-      color: white;
+      background: linear-gradient(90deg, #b8860b, #ffd700);
+      color: #000;
       border: none;
       padding: 0.8rem 1.5rem;
       border-radius: 0.5rem;
-      cursor: pointer;
       font-weight: bold;
-      display: block;
-      margin: 1rem auto;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
+
     button:hover {
-      background: #139e66;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px gold;
     }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
     }
+
     .gallery img {
       width: 100%;
-      border-radius: 0.5rem;
+      border-radius: 0.6rem;
       object-fit: cover;
       height: 120px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px gold;
+    }
+
     .leaderboard {
-      margin-top: 2rem;
+      margin-top: 2.5rem;
+      text-align: center;
     }
+
     .leaderboard h3 {
-      color: #17b978;
-      border-bottom: 2px solid #17b978;
+      color: gold;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+      border-bottom: 2px solid rgba(255, 215, 0, 0.3);
       display: inline-block;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
+
     .leaderboard ul {
       list-style: none;
       padding: 0;
+      margin: 0 auto;
+      max-width: 400px;
     }
+
     .leaderboard li {
-      background: #f3f3f3;
-      padding: 0.6rem 1rem;
+      background: rgba(30, 30, 30, 0.9);
+      padding: 0.8rem 1rem;
       margin: 0.4rem 0;
       border-radius: 0.5rem;
+      color: #f5f5f5;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .leaderboard li:hover {
+      box-shadow: 0 0 10px gold;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+      margin: 2rem 0;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>EnviroCam 🌿</h1>
+    <h1>EnviroCam 🌊</h1>
     <button id="logoutBtn">Log Out</button>
   </header>
 
@@ -116,6 +220,8 @@
       <ul id="leaderboardList"></ul>
     </div>
   </main>
+
+  <footer>© 2025 EnviroCam. All Rights Reserved.</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -161,7 +267,7 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const leaderboardList = document.getElementById("leaderboardList");
 
-    // --- Resize image in browser ---
+    // --- Resize image before upload ---
     function resizeImage(file, maxWidth = 300) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -182,7 +288,7 @@
       });
     }
 
-    // --- Auth State Listener ---
+    // --- Auth state listener ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         userEmail.textContent = "Signed in as: " + user.email;
@@ -202,11 +308,10 @@
       }
     });
 
-    // --- Upload photo directly to Firestore ---
     uploadBtn.addEventListener("click", async () => {
       const file = photoUpload.files[0];
       if (!file) { alert("Select a photo first!"); return; }
-      const imageData = await resizeImage(file); // resize in browser
+      const imageData = await resizeImage(file);
 
       const user = auth.currentUser;
       const userRef = doc(db, "users", user.uid);
@@ -225,7 +330,6 @@
       loadLeaderboard();
     });
 
-    // --- Render gallery ---
     function renderGallery(uploads) {
       gallery.innerHTML = "";
       uploads.forEach(img => {
@@ -235,7 +339,6 @@
       });
     }
 
-    // --- Load leaderboard ---
     async function loadLeaderboard() {
       leaderboardList.innerHTML = "";
       const q = query(collection(db, "users"), orderBy("points", "desc"));
@@ -249,7 +352,6 @@
       });
     }
 
-    // --- Logout ---
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       window.location.href = "index.html";
@@ -257,6 +359,7 @@
   </script>
 </body>
 </html>
+
 
 
 
