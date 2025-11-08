@@ -45,18 +45,26 @@
       z-index: -1;
     }
 
+    /* ✨ Floating Glass Navigation Bar */
     header {
-      background: rgba(0, 40, 80, 0.6);
-      backdrop-filter: blur(8px);
-      border-bottom: 2px solid #00bfff;
-      padding: 1rem 2rem;
+      background: rgba(0, 40, 80, 0.4);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(0, 191, 255, 0.4);
+      padding: 1rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 10;
+      width: 100%;
+      z-index: 50;
       box-shadow: 0 0 25px rgba(0, 191, 255, 0.25);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    header.scrolled {
+      background: rgba(0, 20, 40, 0.7);
+      box-shadow: 0 0 35px rgba(0, 191, 255, 0.3);
     }
 
     h1 {
@@ -64,6 +72,54 @@
       font-size: 1.9rem;
       letter-spacing: 1px;
       text-shadow: 0 0 15px rgba(0, 255, 255, 0.9);
+      flex-shrink: 0;
+      z-index: 11;
+    }
+
+    /* 🌐 Navigation Menu */
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-content {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      background: rgba(5, 10, 25, 0.95);
+      backdrop-filter: blur(10px);
+      flex-direction: column;
+      width: 250px;
+      height: 100vh;
+      padding-top: 80px;
+      padding-right: 2rem;
+      padding-left: 2rem;
+      border-left: 1px solid rgba(0,191,255,0.4);
+      box-shadow: -5px 0 20px rgba(0,191,255,0.2);
+      transition: right 0.4s ease;
+      display: flex;
+      gap: 0;
+      z-index: 45;
+    }
+
+    .nav-content.active {
+      right: 0;
+    }
+
+    .nav-content a {
+      text-decoration: none;
+      color: #aeefff;
+      font-weight: 600;
+      transition: color 0.3s, text-shadow 0.3s;
+      text-align: right;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(0,191,255,0.1);
+    }
+
+    .nav-content a:hover {
+      color: #00e0ff;
+      text-shadow: 0 0 10px #00e0ff;
     }
 
     #logoutBtn {
@@ -71,10 +127,13 @@
       color: #fff;
       border: none;
       border-radius: 0.5rem;
-      padding: 0.6rem 1.2rem;
+      padding: 0.8rem 1.2rem;
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
+      margin-top: 1rem;
+      text-align: center;
+      width: 100%;
     }
 
     #logoutBtn:hover {
@@ -82,9 +141,63 @@
       box-shadow: 0 0 15px #00e0ff;
     }
 
+    /* Hamburger Menu */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 35px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 51;
+    }
+
+    .bar {
+      width: 100%;
+      height: 4px;
+      background-color: #00bfff;
+      margin: 3px 0;
+      border-radius: 5px;
+      transition: 0.4s;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Mobile nav */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-content {
+        width: 200px;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+      }
+
+      .nav-content a {
+        padding: 0.8rem 0;
+      }
+    }
+
     main {
       max-width: 850px;
-      margin: 3rem auto;
+      margin: 7rem auto 3rem; /* extra top space for fixed nav */
       background: rgba(0, 25, 50, 0.75);
       border-radius: 1.5rem;
       padding: 3rem;
@@ -247,9 +360,19 @@
   </video>
   <div class="overlay"></div>
 
-  <header>
+  <header id="navbar">
     <h1>EnviroCam 🌊</h1>
-    <button id="logoutBtn">Log Out</button>
+    <div class="hamburger" id="hamburger">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav class="nav-content" id="nav-content">
+      <a href="welcome.html">Rules</a>
+      <a href="challenge-info.html">Challenges</a>
+      <a href="app.html">Home</a>
+      <button id="logoutBtn">Log Out</button>
+    </nav>
   </header>
 
   <main>
@@ -272,6 +395,27 @@
   </main>
 
   <footer>© 2025 EnviroCam. All Rights Reserved.</footer>
+
+  <script>
+    // Fade nav on scroll
+    window.addEventListener("scroll", () => {
+      const navbar = document.getElementById("navbar");
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+
+    // Hamburger menu
+    const hamburger = document.getElementById("hamburger");
+    const navContent = document.getElementById("nav-content");
+
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("active");
+      navContent.classList.toggle("active");
+    });
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";

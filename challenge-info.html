@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EnviroCam Challenge 🌊</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* 🌊 FIXED FULLSCREEN VIDEO BACKGROUND */
+  .video-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    filter: brightness(0.7) contrast(1.2) saturate(1.3);
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 10, 30, 0.6), rgba(0, 0, 30, 0.9));
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background: rgba(10, 20, 40, 0.55);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    box-shadow: 0 4px 25px rgba(0, 191, 255, 0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 2rem;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  nav.scrolled {
+    background: rgba(5, 10, 25, 0.8);
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.35);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 11;
+  }
+
+  .logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    filter: drop-shadow(0 0 10px #00bfff);
+  }
+
+  .logo h2 {
+    font-size: 1.4rem;
+    color: #00bfff;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(0,191,255,0.8);
+  }
+
+  /* Nav Links */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    background: rgba(5, 10, 25, 0.95);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    width: 250px;
+    height: 100vh;
+    padding-top: 80px;
+    padding-right: 2rem;
+    padding-left: 2rem;
+    border-left: 1px solid rgba(0,191,255,0.4);
+    box-shadow: -5px 0 20px rgba(0,191,255,0.2);
+    transition: right 0.4s ease;
+    display: flex;
+    gap: 0;
+  }
+
+  .nav-links a {
+    color: #cceeff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s, text-shadow 0.3s;
+    text-align: right;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0,191,255,0.1);
+  }
+
+  .nav-links a:hover {
+    color: #00bfff;
+    text-shadow: 0 0 10px rgba(0,191,255,0.8);
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  /* Hamburger Menu */
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 25px;
+    cursor: pointer;
+    z-index: 11;
+  }
+
+  .bar {
+    width: 100%;
+    height: 4px;
+    background-color: #00bfff;
+    margin: 3px 0;
+    border-radius: 5px;
+    transition: 0.4s;
+  }
+
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* Mobile nav */
+  @media (max-width: 768px) {
+    nav {
+      padding: 0.7rem 1rem;
+    }
+
+    .nav-links {
+      width: 200px;
+      padding-right: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .nav-links a {
+      padding: 0.8rem 0;
+    }
+  }
+
+  /* CONTENT */
+  .content {
+    position: relative;
+    z-index: 2;
+    padding: 7rem 1rem 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+    animation: fadeIn 1.5s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    color: #00bfff;
+    text-shadow: 0 0 20px rgba(0, 191, 255, 0.7);
+    margin-bottom: 2rem;
+  }
+
+  section {
+    background: rgba(10, 20, 40, 0.85);
+    border: 2px solid #00bfff;
+    border-radius: 1rem;
+    box-shadow: 0 0 35px rgba(0, 191, 255, 0.4);
+    padding: 2rem;
+    margin-bottom: 3rem;
+    backdrop-filter: blur(10px);
+  }
+
+  section h2 {
+    color: #00bfff;
+    text-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  section p {
+    color: #cceeff;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  video {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 1rem;
+    border: 2px solid #00bfff;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #0077ff, #00bfff);
+    color: #fff;
+    padding: 0.9rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.3s;
+    margin-top: 2rem;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px #00bfff;
+  }
+</style>
+</head>
+<body>
+
+<!-- 🌊 Background video -->
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="waves3.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<div class="overlay"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">
+    <img src="envirocam-logo.png" alt="EnviroCam Logo">
+    <h2>EnviroCam</h2>
+  </div>
+  <div class="hamburger" id="hamburger">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <div class="nav-links" id="nav-links">
+    <a href="welcome.html">Rules</a>
+    <a href="challenge-info.html">Challenges</a>
+    <a href="app.html">Home</a>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+  <h1>🌊 EnviroCam Monthly Challenge</h1>
+
+  <section>
+    <h2>1️⃣ Capture Your Ocean Cleanup</h2>
+    <p>Record a short video or take clear photos of <strong>yourself collecting plastic bottles</strong> from the ocean, rivers, or beaches. Online or stock images are not allowed.</p>
+    <video controls poster="placeholder1.jpg">
+      <source src="envirocamvideo.mp4" type="video/mp4">
+    </video>
+  </section>
+
+  <section>
+    <h2>2️⃣ Uploading Your Evidence</h2>
+    <p>Upload your video through the EnviroCam app using the <strong>"Submit Cleanup"</strong> button. Our AI will verify your upload before awarding points.</p>
+    <video controls poster="placeholder2.jpg">
+      <source src="placeholder-video2.mp4" type="video/mp4">
+    </video>
+  </section>
+
+  <a href="welcome.html" class="btn">Go to The Rules Page</a>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
+    authDomain: "envirocam-5e2b4.firebaseapp.com",
+    projectId: "envirocam-5e2b4",
+    storageBucket: "envirocam-5e2b4.firebasestorage.app",
+    messagingSenderId: "1008928914623",
+    appId: "1:1008928914623:web:0ba8c27cf1e6e45f181a0a",
+    measurementId: "G-F2KSK44YT6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = "index.html";
+  });
+
+  // Navbar fade on scroll
+  const navbar = document.getElementById("navbar");
+  window.addEventListener("scroll", () => {
+    navbar.classList.toggle("scrolled", window.scrollY > 50);
+  });
+
+  // Hamburger menu
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("nav-links");
+
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("active");
+    navLinks.classList.toggle("active");
+  });
+</script>
+
+</body>
+</html>
+
+
+
