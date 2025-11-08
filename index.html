@@ -12,12 +12,35 @@
       height: 100vh;
       overflow: hidden;
       font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at center, #000000 70%, #1a1a1a 100%);
       color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
+      background: #000; /* fallback if video fails */
+    }
+
+    /* 🌊 Fullscreen video background */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0; /* corrected layering */
+      opacity: 0.9;
+    }
+
+    /* Dark overlay to blend video */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(0, 0, 30, 0.6), rgba(0, 0, 0, 0.9));
+      z-index: 1;
     }
 
     /* Floating logo background */
@@ -25,32 +48,38 @@
       position: absolute;
       width: 180px;
       height: auto;
-      opacity: 0.2;
-      filter: drop-shadow(0 0 15px gold);
-      z-index: 0;
+      opacity: 0.25;
+      filter: drop-shadow(0 0 20px gold);
+      z-index: 2; /* ensures it's above video but behind content */
       pointer-events: none;
     }
 
     /* Center container */
     .container {
       position: relative;
-      z-index: 2;
-      background: rgba(20, 20, 20, 0.9);
+      z-index: 3; /* content is now safely above everything */
+      background: rgba(20, 20, 20, 0.85);
       border: 2px solid gold;
       border-radius: 1rem;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
       padding: 2.5rem;
       width: 90%;
       max-width: 400px;
       text-align: center;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
       color: gold;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+      margin-bottom: 1.5rem;
+      font-size: 1.9rem;
     }
 
     input {
@@ -59,7 +88,7 @@
       margin: 0.5rem 0;
       border: 1px solid #555;
       border-radius: 0.5rem;
-      background: #0a0a0a;
+      background: rgba(10,10,10,0.8);
       color: white;
       outline: none;
       font-size: 1rem;
@@ -68,7 +97,7 @@
 
     input:focus {
       border: 1px solid gold;
-      box-shadow: 0 0 8px gold;
+      box-shadow: 0 0 10px gold;
     }
 
     button {
@@ -87,7 +116,7 @@
 
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 15px gold;
+      box-shadow: 0 0 20px gold;
     }
 
     .switch {
@@ -101,35 +130,41 @@
       font-weight: bold;
     }
 
-    /* Google Sign-in Button */
-    #googleSignIn {
-      background: #000;
+    /* Google Sign-in Buttons */
+    #googleSignIn, #googleLogin {
+      background: rgba(0,0,0,0.8);
       color: gold;
       border: 1px solid gold;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
+      margin-top: 0.8rem;
     }
 
-    #googleSignIn img {
+    #googleSignIn img, #googleLogin img {
       width: 22px;
       height: 22px;
     }
 
-    #googleSignIn:hover {
+    #googleSignIn:hover, #googleLogin:hover {
       background: gold;
       color: #000;
     }
   </style>
 </head>
 <body>
+  <!-- 🌊 Ocean Video Background -->
+  <video class="video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="waves3.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <div class="overlay"></div>
+
   <img id="floatingLogo" src="envirocam-logo.png" alt="EnviroCam Logo" />
 
   <div class="container">
     <h1>EnviroCam</h1>
-
-    <!-- Signup Form -->
     <form id="signupForm">
       <input type="email" id="signupEmail" placeholder="Email" required />
       <input type="password" id="signupPassword" placeholder="Password" required />
@@ -140,7 +175,6 @@
       </button>
     </form>
 
-    <!-- Login Form -->
     <form id="loginForm" style="display: none;">
       <input type="email" id="loginEmail" placeholder="Email" required />
       <input type="password" id="loginPassword" placeholder="Password" required />
@@ -152,21 +186,14 @@
     </form>
 
     <div class="switch">
-      <p id="switchText">
-        Already have an account? <span id="switchToLogin">Log In</span>
-      </p>
+      <p id="switchText">Already have an account? <span id="switchToLogin">Log In</span></p>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { 
-      getAuth, 
-      createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } 
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDVb19bAWOOynwaYQLO4RCFoYybXkJqDRU",
@@ -207,7 +234,6 @@
       const password = document.getElementById("signupPassword").value;
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        alert("Welcome to EnviroCam 🌊");
         window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
@@ -220,7 +246,6 @@
       const password = document.getElementById("loginPassword").value;
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Welcome back 🌿");
         window.location.href = "welcome.html";
       } catch (error) {
         alert(error.message);
@@ -245,28 +270,20 @@
       }
     });
 
-    // --- Floating Logo Movement ---
+    // Floating logo bounce
     const logo = document.getElementById("floatingLogo");
-    let x = 50, y = 50;
-    let dx = 2, dy = 1.5;
-
+    let x = 50, y = 50, dx = 2, dy = 1.5;
     function animateLogo() {
       const rect = logo.getBoundingClientRect();
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
-
-      x += dx;
-      y += dy;
-
+      x += dx; y += dy;
       if (x <= 0 || x + rect.width >= screenWidth) dx = -dx;
       if (y <= 0 || y + rect.height >= screenHeight) dy = -dy;
-
       logo.style.left = x + "px";
       logo.style.top = y + "px";
-
       requestAnimationFrame(animateLogo);
     }
-
     logo.style.position = "absolute";
     logo.style.left = x + "px";
     logo.style.top = y + "px";
