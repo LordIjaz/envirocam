@@ -195,7 +195,23 @@
     font-size: 2.2rem;
     color: #00bfff;
     text-shadow: 0 0 20px rgba(0, 191, 255, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
+  .tagline {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 2px;
     margin-bottom: 2rem;
+    animation: colorShift 3s ease-in-out infinite;
+  }
+
+  @keyframes colorShift {
+    0% { color: #00bfff; text-shadow: 0 0 15px rgba(0, 191, 255, 0.8); }
+    25% { color: #0099ff; text-shadow: 0 0 15px rgba(0, 153, 255, 0.8); }
+    50% { color: #00e0ff; text-shadow: 0 0 15px rgba(0, 224, 255, 0.8); }
+    75% { color: #0066ff; text-shadow: 0 0 15px rgba(0, 102, 255, 0.8); }
+    100% { color: #00bfff; text-shadow: 0 0 15px rgba(0, 191, 255, 0.8); }
   }
 
   section {
@@ -278,11 +294,12 @@
 <!-- CONTENT -->
 <div class="content">
   <h1>🌊 EnviroCam Monthly Challenge</h1>
+  <p class="tagline">Capture, Upload, Earn</p>
 
   <section>
     <h2>1️⃣ Capture Your Ocean Cleanup</h2>
     <p>Record a short video or take clear photos of <strong>yourself collecting plastic bottles</strong> from the ocean, rivers, or beaches. Online or stock images are not allowed.</p>
-    <video controls poster="thumbnail1.png">
+    <video controls poster="placeholder1.jpg">
       <source src="envirocamvideo.mp4" type="video/mp4">
     </video>
   </section>
@@ -290,8 +307,8 @@
   <section>
     <h2>2️⃣ Uploading Your Evidence</h2>
     <p>Upload your video through the EnviroCam app using the <strong>"Submit Cleanup"</strong> button. Our AI will verify your upload before awarding points.</p>
-    <video controls poster="envirocam-logo.png">
-      <source src="envirocamvideo2.mp4" type="video/mp4">
+    <video controls poster="placeholder2.jpg">
+      <source src="placeholder-video2.mp4" type="video/mp4">
     </video>
   </section>
 
@@ -337,6 +354,3 @@
 
 </body>
 </html>
-
-
-
